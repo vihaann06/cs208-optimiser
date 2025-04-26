@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Epsilon Optimizer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.1/nouislider.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Epsilon Optimizer</h1>
+            <p class="subtitle">Find the optimal epsilon value for your differential privacy parameters</p>
+        </header>
+        
+        <div class="controls">
+            <h2>Parameters</h2>
+            
+            <div class="range-container">
+                <label>Epsilon Range:</label>
+                <div class="range-inputs">
+                    <div class="input-group">
+                        <label for="epsilon_a">Minimum (εₐ):</label>
+                        <input type="number" id="epsilon_a" min="0.001" max="5" step="0.001" value="0.01">
+                    </div>
+                    <div class="input-group">
+                        <label for="epsilon_b">Maximum (εᵦ):</label>
+                        <input type="number" id="epsilon_b" min="0.001" max="5" step="0.001" value="2.0">
+                    </div>
+                </div>
+                <div id="epsilon-range"></div>
+            </div>
+            
+            <div class="input-container">
+                <label for="num_subjects">Number of Subjects (N):</label>
+                <input type="number" id="num_subjects" min="1" max="10000" value="100">
+            </div>
+            
+            <button id="calculate-button">Calculate Optimal Epsilon</button>
+        </div>
+        
+        <div class="results">
+            <h2>Results</h2>
+            <div id="optimal-epsilon" class="result-box">
+                <p>Optimal Epsilon: <span id="optimal-epsilon-value">-</span></p>
+            </div>
+            <div id="max-welfare" class="result-box">
+                <p>Maximum Welfare: <span id="max-welfare-value">-</span></p>
+            </div>
+        </div>
+        
+        <div class="explanation">
+            <h2>How it works</h2>
+            <p>This tool calculates the optimal epsilon value that maximizes the welfare function:</p>
+            <div class="formula">
+                \[
+                W = \int_{\epsilon_a}^{\epsilon_b} \left( \frac{1}{x} \right) \left( 1 - \frac{1}{N \epsilon} \right) \int_{\max(\epsilon, \epsilon_a)}^{\epsilon_b} \frac{1}{y} \, dy \, dx + N \int_{\epsilon}^{\epsilon_b} \left( 1 - \frac{\epsilon}{x} \right) \, dx
+                \]
+            </div>
+            <p>Where:</p>
+            <ul>
+                <li>εₐ (epsilon_a) is the minimum epsilon value</li>
+                <li>εᵦ (epsilon_b) is the maximum epsilon value</li>
+                <li>N is the number of subjects in the study</li>
+            </ul>
+        </div>
+    </div>
+
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.1/nouislider.min.js"></script>
+    <script>
+        // Initialize the dual-handle range slider
+        const rangeSlider = document.getElementById('epsilon-range');
+        const epsilonA = document.getElementById('epsilon_a');
+        const epsilonB = document.getElementById('epsilon_b');
+        const numSubjects = document.getElementById('num_subjects');
+        const calculateButton = document.getElementById('calculate-button');
+
+        noUiSlider.create(rangeSlider, {
+            start: [0.01, 2.0],
+            connect: true,
+            range: {
+                'min': 0.001,
+                'max': 5.0
+            },
+            step: 0.001,
+            format: {
+                to: function (value) {
+                    return parseFloat(value).toFixed(3);
+                },
+                from: function (value) {
+                    return parseFloat(value);
+                }
+            }
+        });
+
+        // Update input fields when slider changes
+        rangeSlider.noUiSlider.on('update', function (values, handle) {
+            const [min, max] = values;
+            epsilonA.value = min;
+            epsilonB.value = max;
+        });
+
+        // Update slider when input fields change
+        function updateSlider() {
+            const min = parseFloat(epsilonA.value);
+            const max = parseFloat(epsilonB.value);
+            
+            if (min > max) {
+                // Swap values if min is greater than max
+                epsilonA.value = max.toFixed(3);
+                epsilonB.value = min.toFixed(3);
+            }
+            
+            rangeSlider.noUiSlider.set([epsilonA.value, epsilonB.value]);
+        }
+
+        epsilonA.addEventListener('change', updateSlider);
+        epsilonB.addEventListener('change', updateSlider);
+        
+        // Handle calculation button click
+        calculateButton.addEventListener('click', function() {
+            const epsilon_a = parseFloat(epsilonA.value);
+            const epsilon_b = parseFloat(epsilonB.value);
+            const N = parseInt(numSubjects.value);
+            
+            // Validate inputs
+            if (epsilon_a >= epsilon_b) {
+                alert('Minimum epsilon must be less than maximum epsilon');
+                return;
+            }
+            
+            // Show loading state
+            document.getElementById('optimal-epsilon-value').textContent = 'Calculating...';
+            document.getElementById('max-welfare-value').textContent = 'Calculating...';
+            
+            fetch('/calculate_optimal', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    epsilon_a: epsilon_a,
+                    epsilon_b: epsilon_b,
+                    N: N
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    document.getElementById('optimal-epsilon-value').textContent = 'Error';
+                    document.getElementById('max-welfare-value').textContent = data.error;
+                } else {
+                    document.getElementById('optimal-epsilon-value').textContent = data.optimal_epsilon.toFixed(6);
+                    document.getElementById('max-welfare-value').textContent = data.max_welfare.toFixed(6);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('optimal-epsilon-value').textContent = 'Error';
+                document.getElementById('max-welfare-value').textContent = 'An error occurred while calculating.';
+            });
+        });
+    </script>
+</body>
+</html> 

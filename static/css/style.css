@@ -1,0 +1,212 @@
+/* Base styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f5f7fa;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: white;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+/* Header styles */
+header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eaeaea;
+}
+
+h1 {
+    font-size: 2.2rem;
+    color: #2c3e50;
+    margin-bottom: 10px;
+}
+
+.subtitle {
+    color: #7f8c8d;
+    font-size: 1.1rem;
+}
+
+h2 {
+    font-size: 1.6rem;
+    color: #3498db;
+    margin: 20px 0 15px;
+}
+
+/* Controls section */
+.controls {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    border: 1px solid #eaeaea;
+}
+
+.range-container {
+    margin-bottom: 20px;
+}
+
+.range-inputs {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.input-group {
+    flex: 1;
+    margin: 0 10px;
+}
+
+.input-group:first-child {
+    margin-left: 0;
+}
+
+.input-group:last-child {
+    margin-right: 0;
+}
+
+/* noUiSlider styles */
+#epsilon-range {
+    margin: 20px 10px;
+    height: 8px;
+}
+
+.noUi-connect {
+    background: #3498db;
+}
+
+.noUi-handle {
+    width: 18px !important;
+    height: 18px !important;
+    right: -9px !important;
+    top: -5px !important;
+    border-radius: 50%;
+    background: #3498db;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    cursor: pointer;
+}
+
+.noUi-handle:before,
+.noUi-handle:after {
+    display: none;
+}
+
+.noUi-handle:hover {
+    background: #2980b9;
+}
+
+.noUi-target {
+    background: #ddd;
+    border: none;
+    box-shadow: none;
+}
+
+input[type="number"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+button {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    width: 100%;
+    transition: background-color 0.2s ease;
+}
+
+button:hover {
+    background-color: #2980b9;
+}
+
+/* Results section */
+.results {
+    margin-bottom: 30px;
+}
+
+.result-box {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    border-left: 4px solid #3498db;
+}
+
+.result-box p {
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+#optimal-epsilon-value, #max-welfare-value {
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+/* Explanation section */
+.explanation {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 30px;
+    border: 1px solid #eaeaea;
+}
+
+.formula {
+    background-color: white;
+    padding: 15px;
+    border-radius: 4px;
+    margin: 15px 0;
+    overflow-x: auto;
+    text-align: center;
+}
+
+ul {
+    padding-left: 20px;
+}
+
+li {
+    margin-bottom: 8px;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+    
+    h1 {
+        font-size: 1.8rem;
+    }
+    
+    .controls, .explanation {
+        padding: 15px;
+    }
+    
+    .range-inputs {
+        flex-direction: column;
+    }
+    
+    .input-group {
+        margin: 10px 0;
+    }
+} 
