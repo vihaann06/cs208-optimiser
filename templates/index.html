@@ -22,11 +22,11 @@
                 <div class="range-inputs">
                     <div class="input-group">
                         <label for="epsilon_a">Minimum (εₐ):</label>
-                        <input type="number" id="epsilon_a" min="0.001" max="5" step="0.001" value="0.01">
+                        <input type="number" id="epsilon_a" min="0.000001" max="5" step="0.000001" value="0.01">
                     </div>
                     <div class="input-group">
                         <label for="epsilon_b">Maximum (εᵦ):</label>
-                        <input type="number" id="epsilon_b" min="0.001" max="5" step="0.001" value="2.0">
+                        <input type="number" id="epsilon_b" min="0.000001" max="5" step="0.000001" value="2.0">
                     </div>
                 </div>
                 <div id="epsilon-range"></div>
@@ -82,13 +82,13 @@
             start: [0.01, 2.0],
             connect: true,
             range: {
-                'min': 0.001,
+                'min': 0.000001,
                 'max': 5.0
             },
-            step: 0.001,
+            step: 0.000001,
             format: {
                 to: function (value) {
-                    return parseFloat(value).toFixed(3);
+                    return parseFloat(value).toFixed(6);
                 },
                 from: function (value) {
                     return parseFloat(value);
@@ -110,8 +110,8 @@
             
             if (min > max) {
                 // Swap values if min is greater than max
-                epsilonA.value = max.toFixed(3);
-                epsilonB.value = min.toFixed(3);
+                epsilonA.value = max.toFixed(6);
+                epsilonB.value = min.toFixed(6);
             }
             
             rangeSlider.noUiSlider.set([epsilonA.value, epsilonB.value]);
